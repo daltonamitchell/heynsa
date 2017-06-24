@@ -1,4 +1,6 @@
-const SoundBar = ({ start, stop }) => {
+import {Waveform} from './Waveform';
+
+const SoundBar = ({ start, stop, listening }) => {
   return (
     <div>
       <div id="SoundBar">
@@ -6,8 +8,8 @@ const SoundBar = ({ start, stop }) => {
           <button id="start" onClick={start}>Start</button>
           <button id="stop" onClick={stop}>Stop</button>
         </div>
-        <div>
-          <p>this is the soundbar component</p>
+        <div style={{width: '100%', height: '100px'}}>
+            <Waveform numBands={12} mute={!listening}/>
         </div>
       </div>
 

@@ -1,0 +1,16 @@
+@import "~tachyons-sass/tachyons.scss";
+@import "~tachyons-flexbox";
+
+.waveform{
+  @extend .flex;
+  @extend .items-end;
+  @extend .w-100;
+  @extend .h-100;
+  .band{
+    @extend .bg-blue;
+    @extend .flex-auto;
+    @extend .ma1;
+    @extend .br2;
+    @extend .br--top;
+  }
+}

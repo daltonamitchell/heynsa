@@ -107,8 +107,8 @@ export const Waveform = enhance(({model}) => {
     return <div className="waveform">
         <style dangerouslySetInnerHTML={{ __html: stylesheet }} />
         {
-            model.bandValues.map(bandValue => {
-                return <Band bandValue={bandValue} />
+            model.bandValues.map((bandValue, index) => {
+                return <Band key={index} bandValue={bandValue} />
             })
         }
     </div>;

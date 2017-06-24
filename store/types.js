@@ -1,4 +1,4 @@
-export const NEW_MESSAGE = 'NEW_MESSAGE';
+export const ADD_MESSAGE = 'ADD_MESSAGE';
 export const UPDATE_MESSAGE = 'UPDATE_MESSAGE';
 export const START_LISTENING = 'START_LISTENING';
 export const STOP_LISTENING = 'STOP_LISTENING';

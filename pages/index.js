@@ -3,7 +3,7 @@ import firebase from 'firebase';
 import { withReducer, lifecycle, compose, withHandlers } from 'recompose';
 
 import {
-  NEW_MESSAGE,
+  ADD_MESSAGE,
   UPDATE_MESSAGE,
   START_LISTENING,
   STOP_LISTENING,
@@ -16,7 +16,7 @@ import MessageList from '../components/MessageList';
 
 const reducer = (model, message) => {
   switch (message.type) {
-    case NEW_MESSAGE:
+    case ADD_MESSAGE:
       const { newMessage } = message;
       const newMessages = R.append(newMessage, model.messages);
       return R.merge(model, { messages: newMessages });
@@ -85,7 +85,7 @@ const enhance = compose(
       const discussion = database.ref('discuss');
       discussion.on('child_added', snapshot => {
         dispatch({
-          type: NEW_MESSAGE,
+          type: ADD_MESSAGE,
           newMessage: {
             text: snapshot.val().results,
             id: snapshot.key

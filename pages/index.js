@@ -14,8 +14,8 @@ const reducer = (model, message) => {
       break;
     case 'UPDATE_MESSAGE':
       const updatedMessage = message.updatedMessage;
-      const messageIndex = model.message.findIndex((elem, index) => {
-        return (updatedMessage.id = elem.id);
+      const messageIndex = model.messages.findIndex((elem, index) => {
+        return updatedMessage.id === elem.id;
       });
 
       if (messageIndex) {
@@ -80,7 +80,7 @@ const enhance = compose(
         dispatch({
           type: 'NEW_MESSAGE',
           newMessage: {
-            text: snapshot.val().results,
+            text: snapshot.val().transcript,
             id: snapshot.key
           }
         });
@@ -92,8 +92,11 @@ const enhance = compose(
 
       discussion.on('child_changed', snapshot => {
         dispatch({
-          type: 'MESSAGE_UPDATED',
-          updatedMessage: { text: snapshot.val().results, id: snapshot.key }
+          type: 'UPDATE_MESSAGE',
+          updatedMessage: {
+            text: snapshot.val().transcript,
+            id: snapshot.key
+          }
         });
       });
     }

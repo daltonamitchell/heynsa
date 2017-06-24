@@ -9,9 +9,25 @@ const reducer = (model, message) => {
   switch (message.type) {
     case 'NEW_MESSAGE':
       const { newMessage } = message;
-      // debugger;
       const newMessages = R.append(newMessage, model.messages);
       return R.merge(model, { messages: newMessages });
+      break;
+    case 'UPDATE_MESSAGE':
+      const updatedMessage = message.updatedMessage;
+      const messageIndex = model.message.findIndex((elem, index) => {
+        return (updatedMessage.id = elem.id);
+      });
+
+      if (messageIndex) {
+        const newMessages = R.update(
+          messageIndex,
+          updatedMessage,
+          model.messages
+        );
+        return R.merge(model, { messages: newMessages });
+      }
+
+      return model;
       break;
     case 'START_LISTENING':
       return R.merge(model, { listening: true });
@@ -63,12 +79,22 @@ const enhance = compose(
       discussion.on('child_added', snapshot => {
         dispatch({
           type: 'NEW_MESSAGE',
-          newMessage: { text: snapshot.val().results, id: snapshot.key }
+          newMessage: {
+            text: snapshot.val().results,
+            id: snapshot.key
+          }
         });
       });
 
       discussion.on('child_removed', snapshot => {
         dispatch({ type: 'MESSAGE_REMOVED' });
+      });
+
+      discussion.on('child_changed', snapshot => {
+        dispatch({
+          type: 'MESSAGE_UPDATED',
+          updatedMessage: { text: snapshot.val().results, id: snapshot.key }
+        });
       });
     }
   })

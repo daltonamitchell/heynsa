@@ -1,18 +1,27 @@
 import R from 'ramda';
 import firebase from 'firebase';
 import { withReducer, lifecycle, compose, withHandlers } from 'recompose';
+
+import {
+  NEW_MESSAGE,
+  UPDATE_MESSAGE,
+  START_LISTENING,
+  STOP_LISTENING,
+  MESSAGE_REMOVED
+} from '../store/types';
+
 import Layout from '../components/Layout';
 import Header from '../components/Header';
 import MessageList from '../components/MessageList';
 
 const reducer = (model, message) => {
   switch (message.type) {
-    case 'NEW_MESSAGE':
+    case NEW_MESSAGE:
       const { newMessage } = message;
       const newMessages = R.append(newMessage, model.messages);
       return R.merge(model, { messages: newMessages });
       break;
-    case 'UPDATE_MESSAGE':
+    case UPDATE_MESSAGE:
       const updatedMessage = message.updatedMessage;
       const messageIndex = model.message.findIndex((elem, index) => {
         return (updatedMessage.id = elem.id);
@@ -29,13 +38,13 @@ const reducer = (model, message) => {
 
       return model;
       break;
-    case 'START_LISTENING':
+    case START_LISTENING:
       return R.merge(model, { listening: true });
       break;
-    case 'STOP_LISTENING':
+    case STOP_LISTENING:
       return R.merge(model, { listening: false });
       break;
-    case 'MESSAGE_REMOVED':
+    case MESSAGE_REMOVED:
       return R.merge(model, { messages: [] });
     default:
       return model;
@@ -46,10 +55,10 @@ const enhance = compose(
   withReducer('model', 'dispatch', reducer, { messages: [] }),
   withHandlers({
     onStartListening: props => event => {
-      props.dispatch({ type: 'START_LISTENING' });
+      props.dispatch({ type: START_LISTENING });
     },
     onStopListening: props => event => {
-      props.dispatch({ type: 'STOP_LISTENING' });
+      props.dispatch({ type: STOP_LISTENING });
     }
   }),
   lifecycle({
@@ -69,16 +78,14 @@ const enhance = compose(
       const database = fbApp.database();
       const recording = database.ref('recording');
       recording.on('value', snapshot => {
-        const messageType = snapshot.val()
-          ? 'START_LISTENING'
-          : 'STOP_LISTENING';
+        const messageType = snapshot.val() ? START_LISTENING : STOP_LISTENING;
         dispatch({ type: messageType });
       });
 
       const discussion = database.ref('discuss');
       discussion.on('child_added', snapshot => {
         dispatch({
-          type: 'NEW_MESSAGE',
+          type: NEW_MESSAGE,
           newMessage: {
             text: snapshot.val().results,
             id: snapshot.key
@@ -87,12 +94,12 @@ const enhance = compose(
       });
 
       discussion.on('child_removed', snapshot => {
-        dispatch({ type: 'MESSAGE_REMOVED' });
+        dispatch({ type: MESSAGE_REMOVED });
       });
 
       discussion.on('child_changed', snapshot => {
         dispatch({
-          type: 'MESSAGE_UPDATED',
+          type: MESSAGE_UPDATED,
           updatedMessage: { text: snapshot.val().results, id: snapshot.key }
         });
       });

@@ -8,11 +8,7 @@ const Layout = ({ children, title = 'Default page title' }) => {
         <meta charSet="utf-8" />
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
 
-        {/* <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js" />
-        <script>
-          // Initialize Firebase
-          firebase.initializeApp(config);
-        </script> */}
+        <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
       </Head>
 
       {children}

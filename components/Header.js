@@ -4,7 +4,11 @@ const Header = props => {
   return (
     <div>
       <SoundBar start={props.start} stop={props.stop} />
-      <h1>Hello {props.name}</h1>
+      {
+        props.listening ?
+          <h3>Say "NSA Stop"</h3> :
+          <h3>Say "NSA Listen" </h3>
+      }
     </div>
   );
 };

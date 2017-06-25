@@ -13,6 +13,7 @@ import {
 import Layout from '../components/Layout';
 import Header from '../components/Header';
 import MessageList from '../components/MessageList';
+import stylesheet from './index.scss';
 
 const reducer = (model, message) => {
   switch (message.type) {
@@ -78,6 +79,7 @@ const enhance = compose(
       const database = fbApp.database();
       const recording = database.ref('recording');
       recording.on('value', snapshot => {
+        console.log(snapshot.val())
         const messageType = snapshot.val() ? START_LISTENING : STOP_LISTENING;
         dispatch({ type: messageType });
       });
@@ -113,6 +115,7 @@ const enhance = compose(
 const Page = ({ model, dispatch, onStartListening, onStopListening }) => {
   return (
     <Layout>
+      <style dangerouslySetInnerHTML={{ __html: stylesheet }} />
       <Header
         name="Valley Hackathon"
         start={onStartListening}

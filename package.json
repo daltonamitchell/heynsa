@@ -15,9 +15,9 @@
     "tachyons-sass": "^4.7.1"
   },
   "devDependencies": {
-    "sass-loader": "^6.0.6",
+    "node-sass": "^4.5.3",
     "raw-loader": "^0.5.1",
-    "node-sass": "^4.5.3"
+    "sass-loader": "^6.0.6"
   },
   "scripts": {
     "dev": "next",

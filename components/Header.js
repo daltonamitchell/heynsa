@@ -8,7 +8,7 @@ const Header = props => {
         stop={props.stop}
         listening={props.listening}
       />
-      {props.listening ? <h3>Say "NSA Stop"</h3> : <h3>Say "NSA Listen" </h3>}
+      {props.listening ? <h3>Say "NSA Stop"</h3> : <h3>Say "NSA Record" </h3>}
     </div>
   );
 };

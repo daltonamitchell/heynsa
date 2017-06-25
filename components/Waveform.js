@@ -97,8 +97,8 @@ const enhance = compose(
       // onMuteChange(this.props.mute, this.props.model, this.props.dispatch);
       updateConfig(this.props);
     },
-    componentWillReceiveProps() {
-      updateConfig(this.props);
+    componentWillReceiveProps(nextProps) {
+      updateConfig(nextProps);
     }
   })
 );

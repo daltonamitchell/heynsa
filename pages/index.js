@@ -79,7 +79,6 @@ const enhance = compose(
       const database = fbApp.database();
       const recording = database.ref('recording');
       recording.on('value', snapshot => {
-        console.log(snapshot.val());
         const messageType = snapshot.val() ? START_LISTENING : STOP_LISTENING;
         dispatch({ type: messageType });
       });

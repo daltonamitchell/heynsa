@@ -1,7 +1,7 @@
 import { lifecycle, withReducer, compose } from 'recompose';
 import stylesheet from './waveform.scss';
 
-function getFFT(oldBandValues, volume) {
+function getFFT(oldBandValues) {
   const bandValues = oldBandValues.map(() => {
     return Math.random();
   });
@@ -13,28 +13,22 @@ function getFFT(oldBandValues, volume) {
   return bandValues;
 }
 
-function calcBand(bandValue, oldBandValue, volume) {
+function calcBand(bandValue, oldBandValue) {
   if (bandValue >= oldBandValue) oldBandValue = bandValue;
   oldBandValue -= 0.1;
   if (oldBandValue < 0) oldBandValue = 0;
-  oldBandValue *= volume;
   return oldBandValue;
 }
 
 function onMuteChange(mute, model, dispatch) {
   if (mute) {
     clearInterval(model.intervalId);
-  } else {
+    dispatch({ type: 'UPDATE_SETINTERVAL_ID', intervalId: null });
+  } else if(!model.intervalId){
     const intervalId = setInterval(() => {
       dispatch({ type: 'UPDATE_BAND_VALUES' });
     }, 100);
     dispatch({ type: 'UPDATE_SETINTERVAL_ID', intervalId: intervalId });
-    function fadeIn() {
-      dispatch({ type: 'INCREASE_VOLUME' });
-      if (model.volume < 1) setTimeout(fadeIn, 60);
-    }
-    dispatch({ type: 'UPDATE_VOLUME', volume: 0 });
-    fadeIn();
   }
 }
 
@@ -46,14 +40,10 @@ const reducer = (model, message) => {
         bandValues: Array(message.numBands).fill(0),
         oldBandValues: Array(message.numBands).fill(0)
       });
-    case 'UPDATE_VOLUME':
-      return Object.assign({}, model, { volume: message.volume });
-    case 'INCREASE_VOLUME':
-      return Object.assign({}, model, { volume: message.volume + 0.02 });
     case 'UPDATE_BAND_VALUES':
-      const newBandValues = getFFT(model.oldBandValues, model.volume);
+      const newBandValues = getFFT(model.oldBandValues);
       const oldBandValues = newBandValues.map((newBandValue, index) => {
-        return calcBand(newBandValue, model.oldBandValues[index], model.volume);
+        return calcBand(newBandValue, model.oldBandValues[index]);
       });
       return Object.assign({}, model, {
         bandValues: newBandValues,
@@ -62,27 +52,30 @@ const reducer = (model, message) => {
     case 'UPDATE_SETINTERVAL_ID':
       return Object.assign({}, model, { intervalId: message.intervalId });
     case 'UPDATE_MUTE':
-      return Object.assign({}, model, { mute: message.mute });
+      if(message.mute){
+        return Object.assign({}, model, {
+          mute: message.mute,
+          bandValues: Array(model.numBands).fill(0),
+          oldBandValues: Array(model.numBands).fill(0)
+        });
+      }else {
+        return Object.assign({}, model, {
+          mute: message.mute
+        });
+      }
   }
 };
 
 function updateConfig({
-  mute = false,
-  numBands = 12,
-  volume = 1,
-  model,
-  dispatch
-}) {
+                        mute = false,
+                        numBands = 12,
+                        model,
+                        dispatch
+                      }) {
   if (numBands !== model.numBands) {
     if (numBands < 1) numBands = 1;
     if (numBands > 128) numBands = 128;
     dispatch({ type: 'UPDATE_NUM_BANDS', numBands: numBands });
-  }
-
-  if (volume !== model.volume) {
-    if (volume < 0) volume = 0;
-    if (volume > 1) volume = 1;
-    dispatch({ type: 'UPDATE_VOLUME', volume: volume });
   }
 
   if (mute !== model.mute) {
@@ -97,16 +90,15 @@ const enhance = compose(
     oldBandValues: Array(12).fill(0),
     intervalId: null,
     numBands: 12,
-    volume: 0,
     mute: false
   }),
   lifecycle({
     componentDidMount() {
-      onMuteChange(this.props.mute, this.props.model, this.props.dispatch);
+      // onMuteChange(this.props.mute, this.props.model, this.props.dispatch);
       updateConfig(this.props);
     },
     componentWillReceiveProps() {
-      // updateConfig(this.props);
+      updateConfig(this.props);
     }
   })
 );

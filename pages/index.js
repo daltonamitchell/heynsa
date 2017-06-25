@@ -28,7 +28,7 @@ const reducer = (model, message) => {
         return updatedMessage.id === elem.id;
       });
 
-      if (messageIndex) {
+      if (messageIndex > -1) {
         const newMessages = R.update(
           messageIndex,
           updatedMessage,
@@ -79,7 +79,7 @@ const enhance = compose(
       const database = fbApp.database();
       const recording = database.ref('recording');
       recording.on('value', snapshot => {
-        console.log(snapshot.val())
+        console.log(snapshot.val());
         const messageType = snapshot.val() ? START_LISTENING : STOP_LISTENING;
         dispatch({ type: messageType });
       });
@@ -101,7 +101,7 @@ const enhance = compose(
 
       discussion.on('child_changed', snapshot => {
         dispatch({
-          type: 'UPDATE_MESSAGE',
+          type: UPDATE_MESSAGE,
           updatedMessage: {
             text: snapshot.val().transcript,
             id: snapshot.key

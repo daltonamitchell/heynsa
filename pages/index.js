@@ -53,7 +53,7 @@ const reducer = (model, message) => {
 };
 
 const enhance = compose(
-  withReducer('model', 'dispatch', reducer, { messages: [] }),
+  withReducer('model', 'dispatch', reducer, { messages: [], listening: false }),
   withHandlers({
     onStartListening: props => event => {
       props.dispatch({ type: START_LISTENING });
@@ -120,6 +120,7 @@ const Page = ({ model, dispatch, onStartListening, onStopListening }) => {
         name="Valley Hackathon"
         start={onStartListening}
         stop={onStopListening}
+        listening={model.listening}
       />
       <MessageList messages={model.messages} />
     </Layout>
